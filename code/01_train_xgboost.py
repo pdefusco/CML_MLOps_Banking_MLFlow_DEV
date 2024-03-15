@@ -51,21 +51,21 @@ import pyspark.pandas as ps
 
 
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_DEMO"
+DBNAME = "BNK_MLOPS_HOL"
 STORAGE = "s3a://goes-se-sandbox01"
 CONNECTION_NAME = "se-aw-mdl"
 DATE = date.today()
-EXPERIMENT_NAME = "xgboost-bnk-fraud-{0}-{1}".format(USERNAME, DATE)
+EXPERIMENT_NAME = "xgb-cc-fraud-{0}-{1}".format(USERNAME, DATE)
 
 mlflow.set_experiment(EXPERIMENT_NAME)
 
 conn = cmldata.get_connection(CONNECTION_NAME)
 spark = conn.get_spark_session()
 
-df_from_sql = ps.read_table('{0}.BANKING_TRANSACTIONS_{1}'.format(DBNAME, USERNAME))
+df_from_sql = ps.read_table('{0}.CC_TRX_{1}'.format(DBNAME, USERNAME))
 df = df_from_sql.to_pandas()
 
-X_train, X_test, y_train, y_test = train_test_split(df.drop("fraud", axis=1), df["fraud"], test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(df.drop("fraud_trx", axis=1), df["fraud_trx"], test_size=0.3)
 
 with mlflow.start_run():
 

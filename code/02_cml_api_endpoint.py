@@ -184,7 +184,10 @@ client.list_projects()
 
 projectId = os.environ['CDSW_PROJECT_ID']
 username = os.environ["PROJECT_OWNER"]
-experimentName = "xgboost-bnk-fraud-pauldefusco-2024-03-01"
+DBNAME = "BNK_MLOPS_HOL"
+
+date = date.today()
+experimentName = "xgb-cc-fraud-{0}-{1}".format(username, date)
 
 experimentId = mlflow.get_experiment_by_name(experimentName).experiment_id
 runsDf = mlflow.search_runs(experimentId, run_view_type=1)
@@ -196,7 +199,7 @@ deployment = ModelDeployment(client, projectId, username, experimentName, experi
 
 sessionId = secrets.token_hex(nbytes=4)
 modelPath = "artifacts"
-modelName = "BankFraudClassifier-" + username + "-" + sessionId
+modelName = "FraudCLF-" + username + "-" + sessionId
 
 registeredModelResponse = deployment.registerModelFromExperimentRun(modelName, experimentId, experimentRunId, modelPath, sessionId)
 projectCreationResponse = deployment.createPRDProject()

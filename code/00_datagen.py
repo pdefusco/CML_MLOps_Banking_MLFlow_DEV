@@ -87,9 +87,10 @@ class BankDataGen:
                     .withColumn("longitude", "float", minValue=-180, maxValue=180, random=True)
                     .withColumn("latitude", "float", minValue=-90, maxValue=90, random=True)
                     .withColumn("transaction_amount", "float", minValue=0.01, maxValue=30000, random=True)
-                    .withColumn("fraud", "integer", minValue=0, maxValue=1, random=True)
+                    .withColumn("fraud_trx", "string", values=["0", "1"], weights=[9, 1], random=True)
                     )
         df = fakerDataspec.build()
+        df = df.withColumn("fraud_trx", df["fraud_trx"].cast(IntegerType()))
 
         return df
 
@@ -137,11 +138,11 @@ class BankDataGen:
         """
 
         try:
-            df.writeTo("{0}.BANKING_TRANSACTIONS_{1}".format(self.dbname, self.username))\
+            df.writeTo("{0}.CC_TRX_{1}".format(self.dbname, self.username))\
               .using("iceberg").tableProperty("write.format.default", "parquet").append()
 
         except:
-            df.writeTo("{0}.BANKING_TRANSACTIONS_{1}".format(self.dbname, self.username))\
+            df.writeTo("{0}.CC_TRX_{1}".format(self.dbname, self.username))\
                 .using("iceberg").tableProperty("write.format.default", "parquet").createOrReplace()
 
 
@@ -156,7 +157,7 @@ class BankDataGen:
 def main():
 
     USERNAME = os.environ["PROJECT_OWNER"]
-    DBNAME = "BNK_MLOPS_DEMO"
+    DBNAME = "BNK_MLOPS_HOL"
     STORAGE = "s3a://goes-se-sandbox01"
     CONNECTION_NAME = "se-aw-mdl"
 
