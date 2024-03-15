@@ -52,8 +52,9 @@ import pyspark.pandas as ps
 
 USERNAME = os.environ["PROJECT_OWNER"]
 DBNAME = "BNK_MLOPS_HOL"
-STORAGE = "s3a://goes-se-sandbox01"
-CONNECTION_NAME = "se-aw-mdl"
+STORAGE = "s3a://go01-demo/"
+CONNECTION_NAME = "go01-aw-dl"
+
 DATE = date.today()
 EXPERIMENT_NAME = "xgb-cc-fraud-{0}-{1}".format(USERNAME, DATE)
 
@@ -65,22 +66,36 @@ spark = conn.get_spark_session()
 df_from_sql = ps.read_table('{0}.CC_TRX_{1}'.format(DBNAME, USERNAME))
 df = df_from_sql.to_pandas()
 
-X_train, X_test, y_train, y_test = train_test_split(df.drop("fraud_trx", axis=1), df["fraud_trx"], test_size=0.3)
+test_size = 0.3
+X_train, X_test, y_train, y_test = train_test_split(df.drop("fraud_trx", axis=1), df["fraud_trx"], test_size=test_size)
 
 with mlflow.start_run():
 
     model = XGBClassifier(use_label_encoder=False, eval_metric="logloss")
+
+    # Step 1: cambiar test_size linea 69 y recorrer
+    # Step 2: cambiar linea 74, agregar linea 97, y recorrer
+      # linea 75: model = XGBClassifier(use_label_encoder=False, max_depth=4, eval_metric="logloss")
+      # linea 97: mlflow.log_param("max_depth", 4)
+    # Step 3: cambiar linea 74 y 97, agregar linea 98, y recorrer
+      # linea 75: model = XGBClassifier(use_label_encoder=False, max_depth=2, max_leaf_nodes=5, eval_metric="logloss")
+      # linea 97: mlflow.log_param("max_depth", 2)
+      # linea 98: mlflow.log_param("max_leaf_nodes", 5)
+
     model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
     y_pred = model.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
 
     print("Accuracy: %.2f%%" % (accuracy * 100.0))
-    print("Recall: %.2f%%" % (recall * 100.0))
+    print("Test Size: %.2f%%" % (test_size * 100.0))
 
     mlflow.log_param("accuracy", accuracy)
-    mlflow.log_param("recall", recall)
+    mlflow.log_param("test_size", test_size)
+
+    # Step 2:
+    # Step 3:
+
     mlflow.xgboost.log_model(model, artifact_path="artifacts")#, registered_model_name="my_xgboost_model"
 
 def getLatestExperimentInfo(experimentName):
