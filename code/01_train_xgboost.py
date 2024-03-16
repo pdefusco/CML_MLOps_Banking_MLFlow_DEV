@@ -51,7 +51,7 @@ import pyspark.pandas as ps
 
 
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL"
+DBNAME = "BNK_MLOPS_HOL_"+USERNAME
 STORAGE = "s3a://go01-demo/"
 CONNECTION_NAME = "go01-aw-dl"
 

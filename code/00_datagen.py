@@ -157,7 +157,7 @@ class BankDataGen:
 def main():
 
     USERNAME = os.environ["PROJECT_OWNER"]
-    DBNAME = "BNK_MLOPS_HOL"
+    DBNAME = "BNK_MLOPS_HOL_"+USERNAME
     STORAGE = "s3a://goes-se-sandbox01"
     CONNECTION_NAME = "se-aw-mdl"
 

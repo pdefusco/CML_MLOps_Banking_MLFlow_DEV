@@ -83,7 +83,7 @@ class ModelRegistration():
 
 
 username = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL"
+DBNAME = "BNK_MLOPS_HOL_"+USERNAME
 
 date = date.today()
 experimentName = "xgb-cc-fraud-{0}-{1}".format(username, date)
